@@ -1,6 +1,6 @@
-import { JSDOM } from 'jsdom';
 import { mock } from 'node:test';
-import type { BasesEntry, BasesPropertyId, TFile, App, QueryController } from 'obsidian';
+import { JSDOM } from 'jsdom';
+import type { App, BasesEntry, BasesPropertyId, QueryController, TFile } from 'obsidian';
 import type Sortable from 'sortablejs';
 import { DEBOUNCE_DELAY } from '../src/constants.ts';
 
@@ -19,6 +19,9 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
 (global as any).HTMLAnchorElement = dom.window.HTMLAnchorElement;
 (global as any).Element = dom.window.Element;
 (global as any).MouseEvent = dom.window.MouseEvent;
+(global as any).Node = dom.window.Node;
+(global as any).requestAnimationFrame = dom.window.requestAnimationFrame.bind(dom.window);
+(global as any).cancelAnimationFrame = dom.window.cancelAnimationFrame.bind(dom.window);
 
 // Extend HTMLElement prototype with Obsidian-like methods
 const HTMLElementProto = dom.window.HTMLElement.prototype as any;
@@ -52,13 +55,21 @@ if (!HTMLElementProto.createSpan) {
 }
 
 if (!HTMLElementProto.createEl) {
-	HTMLElementProto.createEl = function (tag: string, options?: { cls?: string; text?: string }): HTMLElement {
+	HTMLElementProto.createEl = function (
+		tag: string,
+		options?: { cls?: string; text?: string; attr?: Record<string, string> },
+	): HTMLElement {
 		const el = document.createElement(tag);
 		if (options?.cls) {
 			el.className = options.cls;
 		}
 		if (options?.text) {
 			el.textContent = options.text;
+		}
+		if (options?.attr) {
+			for (const [k, v] of Object.entries(options.attr)) {
+				el.setAttribute(k, v);
+			}
 		}
 		this.appendChild(el);
 		return el;
@@ -193,7 +204,7 @@ export function createMockFn(): MockFn {
 }
 
 // Mock App
-export function createMockApp(): App & {
+export function createMockApp(imageFiles: Record<string, { path: string }> = {}): App & {
 	workspace: { openLinkText: MockFn };
 	fileManager: { processFrontMatter: MockFn };
 } {
@@ -206,6 +217,12 @@ export function createMockApp(): App & {
 		} as any,
 		fileManager: {
 			processFrontMatter,
+		} as any,
+		metadataCache: {
+			getFirstLinkpathDest: (linkpath: string, _sourcePath: string) => imageFiles[linkpath] ?? null,
+		} as any,
+		vault: {
+			getResourcePath: (file: { path: string }) => `app://fake/${file.path}`,
 		} as any,
 	} as any;
 }
@@ -291,10 +308,17 @@ export function addClosestPolyfill(element: HTMLElement): void {
 export function setupTestEnvironment(): void {
 	// DOM is already set up at module level, but ensure it's available
 	if (typeof document === 'undefined') {
-		const newDom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+		const newDom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+			url: 'http://localhost',
+			pretendToBeVisual: true,
+			resources: 'usable',
+		});
 		(global as any).document = newDom.window.document;
 		(global as any).window = newDom.window;
 		(global as any).HTMLElement = newDom.window.HTMLElement;
+		(global as any).Node = newDom.window.Node;
+		(global as any).requestAnimationFrame = newDom.window.requestAnimationFrame.bind(newDom.window);
+		(global as any).cancelAnimationFrame = newDom.window.cancelAnimationFrame.bind(newDom.window);
 	}
 }
 

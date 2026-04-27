@@ -11,12 +11,14 @@ A kanban-style drag-and-drop custom view for Obsidian Bases that allows you to o
 - **Dynamic Column Generation**: Select any property from your base to generate kanban columns automatically
 - **Drag and Drop**: Move cards between columns with smooth animations
 - **Column Reordering**: Drag columns by their handle (⋮⋮) to reorder them to your preference
+- **Swimlanes**: Optionally group the board into horizontal lanes using a second property
 - **Column Color Themes**: Assign colors to columns using the color picker button for visual categorization
 - **Column Order Persistence**: Your column order is saved per property and persists across sessions
 - **Property Selection**: Choose which property determines your columns (e.g., "Status", "Priority", "Category")
 - **Uncategorized Entries**: Notes without a value for the selected property are automatically grouped in an "Uncategorized" column
 - **Property Display**: Selected properties are shown on each card for at-a-glance context
 - **Custom Card Titles**: Display a frontmatter property as the card title instead of the file name — useful when files share a common name (e.g., `README.md`) across folders
+- **Cover Images**: Show a cover image on each card by picking a frontmatter property — mirrors Obsidian's native Cards view *Image property* with matching fit (cover/contain) and aspect-ratio controls, so one frontmatter field works for both views
 - **Property Word Wrap**: Toggle property text wrapping on cards to handle long property values
 - **Click to Open**: Click any card to open the corresponding note (Cmd/Ctrl+click to open in new tab)
 - **Visual Feedback**: Clear visual indicators during drag operations
@@ -60,7 +62,8 @@ A kanban-style drag-and-drop custom view for Obsidian Bases that allows you to o
 5. Drag cards between columns to update the property value
 6. Click any card to open the corresponding note (Cmd/Ctrl+click to open in new tab)
 7. Drag columns by their handle (⋮⋮) to reorder them - your preferred order will be saved
-8. Optionally, select a property in "Card title property" to display that property's value as each card's title instead of the file name
+8. Optionally, select a property in "Swimlane by" to split the board into horizontal lanes
+9. Optionally, select a property in "Card title property" to display that property's value as each card's title instead of the file name
 
 ### Example
 
@@ -71,10 +74,26 @@ If your base has a "Status" property with values "To Do", "Doing", and "Done":
 - Click any card to open the note (Cmd/Ctrl+click to open in new tab)
 - Drag columns by their handle to reorder them - your order preference will be remembered
 
+If your base also has a "Priority" property with values "High", "Medium", and "Low":
+- Select "Status" in the "Group by" dropdown
+- Select "Priority" in the "Swimlane by" dropdown
+- The board will render one horizontal lane for each priority, and each lane will contain the same status columns
+- Drag cards sideways to change their status, or drag them to another lane to change their priority
+- Drag lane headers to reorder lanes, use the lane toggle to collapse or expand a lane, and drag any column header to reorder that column across all lanes
+- Notes without a value for the swimlane property appear in an "Uncategorized" lane
+- Leave "Swimlane by" unset to use the original single-axis kanban layout
+
 If your project folders each contain a `README.md` with a `title` property:
 - Select `title` in the "Card title property" dropdown
 - Cards will display the `title` property value instead of "README"
 - If a note is missing the property, the file name is used as a fallback
+
+If your notes have a frontmatter property pointing at a cover image (e.g., `cover: "[[book-cover.jpg]]"` or `cover: "https://example.com/poster.jpg"`):
+- Select that property in the "Image property" dropdown
+- Each card gets a cover image above the title
+- Use "Image fit" to choose between Cover (crop to fill) and Contain (letterbox)
+- Drag the "Image aspect ratio" slider to size the cover — wide banner on the left, tall portrait on the right
+- The same property value also works in Obsidian's built-in Cards view, so the two views stay in sync
 
 ## Development
 
@@ -173,4 +192,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [SortableJS](https://sortablejs.github.io/Sortable/) for drag-and-drop functionality
 - Inspired by the need for better task management in Obsidian Bases
-

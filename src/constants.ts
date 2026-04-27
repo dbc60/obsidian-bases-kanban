@@ -29,13 +29,33 @@ export const DATA_ATTRIBUTES = {
 	SORTABLE_CONTAINER: 'data-sortable-container',
 	COLUMN_POSITION: 'data-column-position',
 	COLUMN_COLOR: 'data-column-color',
+	SWIMLANE_VALUE: 'data-swimlane-value',
 } as const;
+
+/**
+ * Separator used to build composite cardOrders keys when swimlanes are active.
+ * Unit Separator (U+001F) is unlikely to occur inside a property value.
+ */
+export const SWIMLANE_KEY_SEPARATOR = '\u001F';
 
 /** CSS class names */
 export const CSS_CLASSES = {
 	// Container
 	VIEW_CONTAINER: 'obk-view-container',
 	BOARD: 'obk-board',
+	BOARD_WITH_SWIMLANES: 'obk-board--with-swimlanes',
+
+	// Swimlane (horizontal grouping band)
+	SWIMLANE: 'obk-swimlane',
+	SWIMLANE_COLLAPSED: 'obk-swimlane--collapsed',
+	SWIMLANE_HEADER: 'obk-swimlane-header',
+	SWIMLANE_TITLE: 'obk-swimlane-title',
+	SWIMLANE_COUNT: 'obk-swimlane-count',
+	SWIMLANE_BODY: 'obk-swimlane-body',
+	SWIMLANE_TOGGLE: 'obk-swimlane-toggle',
+	SWIMLANE_DRAG_HANDLE: 'obk-swimlane-drag-handle',
+	SWIMLANE_DRAGGING: 'obk-swimlane-dragging',
+	SWIMLANE_GHOST: 'obk-swimlane-ghost',
 
 	// Property selector (for future or framework-driven UI)
 	PROPERTY_SELECTOR: 'obk-property-selector',
@@ -56,6 +76,9 @@ export const CSS_CLASSES = {
 	CARD: 'obk-card',
 	CARD_TITLE: 'obk-card-title',
 	CARD_PREVIEW: 'obk-card-preview',
+	CARD_COVER: 'obk-card-cover',
+	CARD_COVER_FIT_COVER: 'obk-card-cover--fit-cover',
+	CARD_COVER_FIT_CONTAIN: 'obk-card-cover--fit-contain',
 	CARD_ACTIVE: 'obk-card--active',
 	CARD_HOVER: 'obk-card--hover',
 	CARD_DRAGGING: 'obk-card-dragging',
